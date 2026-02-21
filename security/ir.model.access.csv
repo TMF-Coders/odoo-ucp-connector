@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+# If we create new models specific to UCP (e.g., ucp.mandate.log), define them here.
+# Existing models (sale.order, product.template) rely on existing security mappings in the base modules.
