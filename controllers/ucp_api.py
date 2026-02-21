@@ -12,11 +12,14 @@ class UcpApiController(http.Controller):
         """
         payload = request.get_json_data()
         
-        # TODO: Advanced validation, Partner matching
-        # MVP: Create order
-        order = request.env['sale.order'].sudo()._create_from_ucp_payload(payload)
-        
-        return order._to_ucp_checkout_format()
+        try:
+            # MVP: Create order
+            order = request.env['sale.order'].sudo()._create_from_ucp_payload(payload)
+            return order._to_ucp_checkout_format()
+        except ValueError as e:
+            return {'error': str(e)}
+        except Exception as e:
+            return {'error': 'Internal Server Error while creating UCP Session'}
 
     @http.route('/ucp/v1/checkout-sessions/<string:session_id>', type='json', auth='api_key', methods=['PUT'], csrf=False)
     def update_checkout_session(self, session_id, **post):
@@ -29,9 +32,29 @@ class UcpApiController(http.Controller):
         if not order:
             return {'error': 'Session not found'}
             
-        # TODO: update logic here based on payload
-        
-        return order._to_ucp_checkout_format()
+        try:
+            # Clear existing lines to replace with new payload (Full Cart sync)
+            order.order_line.unlink()
+            
+            # Map new lines
+            order_lines = []
+            for line in payload.get('lines', []):
+                product_id = int(line.get('id', 0))
+                product = request.env['product.product'].sudo().browse(product_id)
+                if not product.exists():
+                    raise ValueError(f"Product ID {product_id} not found in catalog")
+    
+                order_lines.append((0, 0, {
+                    'product_id': product.id,
+                    'product_uom_qty': line.get('quantity', 1),
+                }))
+                
+            order.write({'order_line': order_lines})
+            return order._to_ucp_checkout_format()
+        except ValueError as e:
+            return {'error': str(e)}
+        except Exception as e:
+            return {'error': 'Internal Server Error while updating UCP Session'}
 
     @http.route('/ucp/v1/checkout-sessions/<string:session_id>/complete', type='json', auth='api_key', methods=['POST'], csrf=False)
     def complete_checkout_session(self, session_id, **post):
@@ -46,9 +69,12 @@ class UcpApiController(http.Controller):
             
         payment_data = payload.get('payment_data')
         
-        if payment_data:
-            # TODO: Integrate with Odoo payment.transaction logic
-            # order.action_confirm() as a stub for successful payment
-            order.action_confirm()
-            
-        return order._to_ucp_checkout_format()
+        try:
+            if payment_data:
+                # TODO: Integrate with Odoo payment.transaction logic
+                # For an Agent MVP, we trust the agent's payment_data string to represent an authorized mandate
+                order.action_confirm()
+                
+            return order._to_ucp_checkout_format()
+        except Exception as e:
+            return {'error': 'Internal Server Error while completing UCP Session'}

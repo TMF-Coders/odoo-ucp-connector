@@ -10,15 +10,35 @@ class SaleOrder(models.Model):
     def _create_from_ucp_payload(self, payload):
         """
         Creates a draft sale order from a UCP checkout payload.
+        Expects payload struct: {'session_id': str, 'lines': [{'id': str, 'quantity': int}]}
         """
-        # Logic to map UCP payload to Odoo order lines, etc.
-        # This is an MVP stub for now, expecting a dictionary.
-        
-        # Simplified example
-        order = self.env['sale.order'].create({
-            'ucp_session_id': payload.get('session_id'),
-            # Partner ID would need to be determined from payload or a generic AI Agent partner
+        session_id = payload.get('session_id')
+        if not session_id:
+            raise ValueError("UCP Payload missing session_id")
+
+        # Find a default public partner or Agent Partner (MVP: take the first or create one)
+        agent_partner = self.env['res.partner'].search([('name', '=', 'UCP Agent Guest')], limit=1)
+        if not agent_partner:
+            agent_partner = self.env['res.partner'].create({'name': 'UCP Agent Guest'})
+
+        order_lines = []
+        for line in payload.get('lines', []):
+            product_id = int(line.get('id', 0))
+            product = self.env['product.product'].browse(product_id)
+            if not product.exists():
+                raise ValueError(f"Product ID {product_id} not found in catalog")
+
+            order_lines.append((0, 0, {
+                'product_id': product.id,
+                'product_uom_qty': line.get('quantity', 1),
+            }))
+
+        order = self.create({
+            'ucp_session_id': session_id,
+            'partner_id': agent_partner.id,
+            'order_line': order_lines,
         })
+        
         return order
 
     def _to_ucp_checkout_format(self):

@@ -22,8 +22,21 @@ class TestUcpCheckout(SavepointCase):
         """ Test that a UCP payload generates a valid Sale Order draft """
         payload = {
             'session_id': 'ucp_sess_123456',
-            'lines': [{'id': self.product.id, 'quantity': 1}]
+            'lines': [{'id': self.product.id, 'quantity': 2}]
         }
         order = self.sale_order_model._create_from_ucp_payload(payload)
         self.assertEqual(order.ucp_session_id, 'ucp_sess_123456')
         self.assertEqual(order.state, 'draft')
+        self.assertEqual(len(order.order_line), 1)
+        self.assertEqual(order.order_line[0].product_id, self.product)
+        self.assertEqual(order.order_line[0].product_uom_qty, 2)
+        
+    def test_03_create_order_invalid_product(self):
+        """ Test that invalid products raise ValueError """
+        payload = {
+            'session_id': 'ucp_sess_invalid',
+            'lines': [{'id': 999999, 'quantity': 1}]
+        }
+        with self.assertRaises(ValueError):
+            self.sale_order_model._create_from_ucp_payload(payload)
+
