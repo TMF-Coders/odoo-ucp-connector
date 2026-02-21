@@ -4,6 +4,32 @@ from odoo.http import request
 
 class UcpApiController(http.Controller):
 
+    @http.route('/.well-known/ucp', type='http', auth='public', methods=['GET'], csrf=False)
+    def ucp_discovery_profile(self, **kw):
+        """
+        UCP Discovery Profile. Mandatory for Google Market Platform.
+        Returns the capabilities of this Odoo instance.
+        """
+        # In a real module, these credentials and capabilities would be configurable in odoo settings (res.config.settings)
+        profile = {
+          "version": "2026-01-23",
+          "services": {
+            "dev.ucp.shopping": {
+              "capabilities": ["dev.ucp.shopping.checkout", "dev.ucp.shopping.order"],
+              "payment_handlers": [
+                {
+                  "id": "com.google.pay", # Example generic handler
+                  "configuration": {}
+                }
+              ]
+            }
+          }
+        }
+        return request.make_response(
+            json.dumps(profile),
+            headers=[('Content-Type', 'application/json')]
+        )
+
     @http.route('/ucp/v1/checkout-sessions', type='json', auth='api_key', methods=['POST'], csrf=False)
     def create_checkout_session(self, **post):
         """
@@ -71,9 +97,8 @@ class UcpApiController(http.Controller):
         
         try:
             if payment_data:
-                # TODO: Integrate with Odoo payment.transaction logic
-                # For an Agent MVP, we trust the agent's payment_data string to represent an authorized mandate
-                order.action_confirm()
+                # Integrate with Odoo payment.transaction logic defined in the model
+                order._process_ucp_payment(payment_data)
                 
             return order._to_ucp_checkout_format()
         except Exception as e:

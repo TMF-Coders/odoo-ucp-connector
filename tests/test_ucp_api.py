@@ -84,3 +84,12 @@ class TestUcpApiController(HttpCase):
         result = response.json()
         self.assertIn('error', result)
         self.assertIn('not found in catalog', result['error'])
+
+    def test_04_discovery_profile(self):
+        """ Integration Test: GET /.well-known/ucp """
+        response = self.url_open('/.well-known/ucp')
+        self.assertEqual(response.status_code, 200)
+        
+        result = response.json()
+        self.assertEqual(result.get('version'), '2026-01-23')
+        self.assertIn('dev.ucp.shopping', result.get('services', {}))
