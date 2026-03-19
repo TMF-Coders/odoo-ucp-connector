@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ucp_bearer_token_manager,ucp.bearer.token.manager,model_ucp_bearer_token,base.group_system,1,1,1,1
+access_ucp_bearer_token_user,ucp.bearer.token.user,model_ucp_bearer_token,base.group_user,1,0,0,0

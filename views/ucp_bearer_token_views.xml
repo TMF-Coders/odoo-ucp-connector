@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ucp_bearer_token_tree" model="ir.ui.view">
+        <field name="name">ucp.bearer.token.tree</field>
+        <field name="model">ucp.bearer.token</field>
+        <field name="arch" type="xml">
+            <list string="UCP Bearer Tokens">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="token"/>
+                <field name="expiration"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ucp_bearer_token_form" model="ir.ui.view">
+        <field name="name">ucp.bearer.token.form</field>
+        <field name="model">ucp.bearer.token</field>
+        <field name="arch" type="xml">
+            <form string="UCP Bearer Token">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="user_id"/>
+                        <field name="token"/>
+                        <field name="expiration"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ucp_bearer_token" model="ir.actions.act_window">
+        <field name="name">UCP Bearer Tokens</field>
+        <field name="res_model">ucp.bearer.token</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_ucp_bearer_token" name="UCP Tokens" parent="sale.menu_sale_config" action="action_ucp_bearer_token" sequence="100"/>
+</odoo>
