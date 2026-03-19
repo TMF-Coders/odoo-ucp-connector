@@ -1,21 +1,24 @@
-# Universal Commerce Protocol (UCP) Connector for Odoo
+# Universal Commerce Protocol (UCP) Connector
 
-This module transforms any Odoo 18 eCommerce instance into an AI-ready transaction endpoint by implementing the **Google Universal Commerce Protocol (UCP)**.
+The gateway between Odoo and the Global AI Commerce Mesh.
 
-**Created by**: TMFCoders SL
+## 🚀 Overview
+This module implements the **Universal Commerce Protocol (UCP)** standard. It allows your Odoo store to be "discovered" and "navigated" by Generative AI agents (like Google Gemini and others) looking to fulfill orders for users.
 
-## Features
-- Full compliance with UCP capabilities mapping.
-- Native conversion of UCP JSON to Odoo `sale.order`.
-- Complete Webhooks implementation mapping.
-- Secure, tokenized payment handling compatible with Odoo 18 payment flows.
+## ✨ Key Features
+- **Headless Checkout API**: Exposes `/ucp/v1/checkout-sessions` following the standard specification.
+- **Native Data Mapping**: Translates UCP schemas (Cart, Shipping, Billing) directly into Odoo Sales Orders.
+- **Inventory Visibility**: Provides real-time stock and pricing feedback to external agents.
+- **Security**: Controlled access via Bearer Tokens and secure session tokens.
 
-## Usage
-Simply install the module. It exposes `/ucp/v1/checkout-sessions` secured by OAuth 2.0 Bearer Identity Linking. AI Agents connecting to this endpoint will be able to complete checkouts natively and link their actions to an Odoo User.
+## 📦 Installation
+1. Install the module via Odoo Apps.
+2. In **Settings > General Settings**, locate the UCP section.
+3. Generate or configure your Bearer Tokens for authorized agents.
 
-## ToDo / Roadmap (UCP Advanced Extensions)
-While the core "Native Checkout REST", Identity Linking, and Discovery profiles are supported, the following capabilities are planned for future releases to achieve full UCP spec compliance:
-- **`dev.ucp.shopping.fulfillment`**: Expose shipping methods, pickup locations, delivery estimates, and option groups.
-- **`dev.ucp.shopping.discounts`**: Support for injecting and reconciling coupon codes and gift cards.
-- **`dev.ucp.shopping.ap2_mandate`**: Cryptographic non-repudiation via JWS signatures for Merchant Authorization.
-- **`dev.ucp.shopping.order` (Webhooks)**: Push full order lifecycle events (shipped, delivered, canceled) to the platform's webhook endpoint properly encoded and signed.
+## 👨‍💻 Author
+**TMFCoders SL**  
+[tmfcoders.com](https://tmfcoders.com)  
+
+## 📄 License
+Licensed under **OPL-1**.

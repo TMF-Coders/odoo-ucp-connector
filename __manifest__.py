@@ -6,8 +6,7 @@
     'description': """
 Universal Commerce Protocol (UCP) Connector
 ===========================================
-This module enables generative AI agents (like Google Gemini) to seamlessly 
-interact with your Odoo eCommerce backend.
+This module enables generative AI agents (like Google Gemini) to seamlessly interact with your Odoo eCommerce backend.
 
 Key Features:
 -------------
@@ -16,7 +15,9 @@ Key Features:
 - Enables AI agents to negotiate prices, check inventory, and complete orders.
     """,
     'author': 'TMFCoders SL',
-    'website': 'https://github.com/TMF-Coders/odoo-ucp-connector',
+    'website': 'https://tmfcoders.com',
+    'price': 99.00,
+    'currency': 'EUR',
     'license': 'OPL-1',
     'depends': [
         'base',
@@ -29,7 +30,7 @@ Key Features:
         'security/ir.model.access.csv',
         'views/ucp_bearer_token_views.xml',
     ],
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/hero.png'],
     'installable': True,
     'application': True,
     'auto_install': False,
