@@ -75,8 +75,7 @@ class UcpApiController(http.Controller):
             
         try:
             idempotency_key = request.httprequest.headers.get('Idempotency-Key')
-            # We use a targeted sudo only for the specific operation model
-            SaleOrder = request.env['sale.order'].sudo()
+            SaleOrder = request.env['sale.order']
             order = SaleOrder._create_from_ucp_payload(payload, idempotency_key=idempotency_key)
             return self._json_response(order._to_ucp_checkout_format(), 201)
         except ValueError as e:
@@ -98,7 +97,7 @@ class UcpApiController(http.Controller):
         except Exception:
             return self._json_response({'error': 'Invalid JSON'}, 400)
 
-        SaleOrder = request.env['sale.order'].sudo()
+        SaleOrder = request.env['sale.order']
         order = SaleOrder.search([('ucp_session_id', '=', session_id)], limit=1)
         
         if not order:
@@ -128,7 +127,7 @@ class UcpApiController(http.Controller):
         except Exception:
             return self._json_response({'error': 'Invalid JSON'}, 400)
 
-        SaleOrder = request.env['sale.order'].sudo()
+        SaleOrder = request.env['sale.order']
         order = SaleOrder.search([('ucp_session_id', '=', session_id)], limit=1)
         
         if not order:
