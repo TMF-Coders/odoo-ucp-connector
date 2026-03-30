@@ -30,7 +30,7 @@ Key Features:
         'security/ir.model.access.csv',
         'views/ucp_bearer_token_views.xml',
     ],
-    'images': ['static/description/hero.png'],
+    'images': ['static/description/main_screenshot.png'],
     'installable': True,
     'application': True,
     'auto_install': False,
